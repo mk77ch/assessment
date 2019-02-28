@@ -10,12 +10,7 @@ class ApiController
 
         if(is_array($filter))
         {
-            foreach($filter as $field => $value)
-            {
-                $where[] = "`{$field}` = '{$value}'";
-            }
-
-            $articles = $record->find_where('articles', implode(' AND ', $where));
+            $articles = $record->find_where('articles', $filter);
         }
         else
         {

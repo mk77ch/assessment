@@ -19,7 +19,7 @@ class Record
     public function find_all($table)
     {
         $records = array();
-        $result  = $this->mysqli->query("SELECT * FROM `{$table}`");
+        $result  = $this->mysqli->query("SELECT * FROM `{$this->mysqli->real_escape_string($table)}`");
 
         if($result)
         {
@@ -34,10 +34,19 @@ class Record
         return $records;
     }
 
-    public function find_where($table, $where)
+    public function find_where($table, $filter)
     {
+        $whereArray = array();
+
+        foreach($filter as $field => $value)
+        {
+            $whereArray[] = "`{$this->escape($field)}` = '{$this->escape($value)}'";
+        }
+
+        $whereString = implode(' AND ', $whereArray);
+
         $records = array();
-        $result  = $this->mysqli->query("SELECT * FROM `{$table}` WHERE ".$where);
+        $result  = $this->mysqli->query("SELECT * FROM `{$table}` WHERE ".$whereString);
 
         if($result)
         {
@@ -50,6 +59,11 @@ class Record
         }
 
         return $records;
+    }
+
+    public function escape($string)
+    {
+        return $this->mysqli->real_escape_string($string);
     }
 }
 
